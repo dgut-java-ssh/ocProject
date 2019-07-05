@@ -52,6 +52,7 @@
 				/error/** = anon
 				/res/** = anon
 				/tools/** = anon
+				/static/upload/** = anon
 				
 				/auth/** = anon
 				/auth/logout.html = logout 

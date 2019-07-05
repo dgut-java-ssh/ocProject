@@ -27,9 +27,9 @@ public class ConstsSiteCarouselServiceImpl implements IConstsSiteCarouselService
 	public List<ConstsSiteCarousel> queryCarousels(Integer count){
 		List<ConstsSiteCarousel> resultList = entityDao.queryCarousels(count);
 		//处理为七牛图片链接
-		for(ConstsSiteCarousel item : resultList){
-			item.setPicture(QiniuStorage.getUrl(item.getPicture()));
-		}
+//		for(ConstsSiteCarousel item : resultList){
+//			item.setPicture(QiniuStorage.getUrl(item.getPicture()));
+//		}
 		return resultList;
 	}
 
@@ -37,12 +37,12 @@ public class ConstsSiteCarouselServiceImpl implements IConstsSiteCarouselService
 	public TailPage<ConstsSiteCarousel> queryPage(ConstsSiteCarousel queryEntity ,TailPage<ConstsSiteCarousel> page){
 		Integer itemsTotalCount = entityDao.getTotalItemsCount(queryEntity);
 		List<ConstsSiteCarousel> items = entityDao.queryPage(queryEntity,page);
-		if(CollectionUtils.isNotEmpty(items)){
-			for(ConstsSiteCarousel item : items){
-				String pictureUrl = QiniuStorage.getUrl(item.getPicture());//处理图片
-				item.setPicture(pictureUrl);
-			}
-		}
+//		if(CollectionUtils.isNotEmpty(items)){
+//			for(ConstsSiteCarousel item : items){
+//				String pictureUrl = QiniuStorage.getUrl(item.getPicture());//处理图片
+//				item.setPicture(pictureUrl);
+//			}
+//		}
 		page.setItemsTotalCount(itemsTotalCount);
 		page.setItems(items);
 		return page;

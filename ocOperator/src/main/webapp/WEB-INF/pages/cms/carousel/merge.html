@@ -31,7 +31,7 @@
 								<input type="file" id="pictureImg" name="pictureImg" style="display: none;" onchange="photoImgChange();">
 								<div class="ui-avatar-box">
 								<#if (entity.picture)?? && entity.picture != ''>
-								<img id="carousel-picture" src="${(entity.picture)!}" style="max-width: 250px;">
+								<img id="carousel-picture" src="${s.base}${(entity.picture)!}" style="max-width: 250px;">
 								<#else>
 								<img id="carousel-picture" src="" style="display: none;max-width: 250px;">
 								</#if>

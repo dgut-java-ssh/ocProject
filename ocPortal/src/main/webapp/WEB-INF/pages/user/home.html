@@ -27,7 +27,7 @@
 					<div class="comment clearfix">
 						<div class="comment-header">
 							<#if item.header?? && item.header != ''>
-							<img class="lecturer-uimg" src="${item.header!}">
+							<img class="lecturer-uimg" src="${s.base}${item.header!}">
 							<#else>
 							<img class="lecturer-uimg" src="${s.base}/res/i/header.jpg">
 							</#if>

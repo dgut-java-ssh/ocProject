@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.online.college.common.util.IDUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.online.college.common.page.TailPage;
-import com.online.college.common.storage.QiniuStorage;
 import com.online.college.common.util.EncryptUtil;
 import com.online.college.common.web.JsonView;
 import com.online.college.common.web.SessionContext;
@@ -56,22 +56,21 @@ public class UserController {
 	 * 首页
 	 */
 	@RequestMapping("/home")
-	public ModelAndView index(TailPage<UserFollowStudyRecord> page){
+	public ModelAndView index(TailPage<UserFollowStudyRecord> page, HttpServletRequest request){
 		ModelAndView mv = new ModelAndView("user/home");
 		mv.addObject("curNav","home");
-		
+
+		AuthUser authUser = authUserService.getById(SessionContext.getUserId());
+		SessionContext.setAttribute(request, "header", authUser.getHeader());
+
 		//加载关注用户的动态
 		UserFollowStudyRecord queryEntity = new UserFollowStudyRecord();
 		queryEntity.setUserId(SessionContext.getUserId());
 		page = userFollowsService.queryUserFollowStudyRecordPage(queryEntity, page);
-		
-		//处理用户头像
-		for(UserFollowStudyRecord item : page.getItems()){
-			if(StringUtils.isNotEmpty(item.getHeader())){
-				item.setHeader(item.getHeader());
-			}
-		}
+
+
 		mv.addObject("page", page);
+		mv.addObject("header", SessionContext.getAttribute(request, "header"));
 		
 		return mv;
 	}
@@ -80,7 +79,7 @@ public class UserController {
 	 * 我的课程
 	 */
 	@RequestMapping("/course")
-	public ModelAndView course(TailPage<UserCourseSectionDto> page){
+	public ModelAndView course(TailPage<UserCourseSectionDto> page, HttpServletRequest request){
 		ModelAndView mv = new ModelAndView("user/course");
 		mv.addObject("curNav","course");
 		
@@ -88,7 +87,7 @@ public class UserController {
 		queryEntity.setUserId(SessionContext.getUserId());
 		page = userCourseSectionService.queryPage(queryEntity, page);
 		mv.addObject("page", page);
-		
+		mv.addObject("header", SessionContext.getAttribute(request, "header"));
 		return mv;
 	}
 	
@@ -96,7 +95,7 @@ public class UserController {
 	 * 我的收藏
 	 */
 	@RequestMapping("/collect")
-	public ModelAndView collect(TailPage<UserCollections> page){
+	public ModelAndView collect(TailPage<UserCollections> page, HttpServletRequest request){
 		ModelAndView mv = new ModelAndView("user/collect");
 		mv.addObject("curNav","collect");
 		UserCollections queryEntity = new UserCollections();
@@ -104,6 +103,7 @@ public class UserController {
 		page = userCollectionsService.queryPage(queryEntity, page);
 		
 		mv.addObject("page", page);
+		mv.addObject("header", SessionContext.getAttribute(request, "header"));
 		return mv;
 	}
 	
@@ -114,16 +114,16 @@ public class UserController {
 	public ModelAndView info(HttpServletRequest request){
 		ModelAndView mv = new ModelAndView("user/info");
 		mv.addObject("curNav","info");
-		HttpSession session = request.getSession();
 
 		AuthUser authUser = authUserService.getById(SessionContext.getUserId());
 
-		session.setAttribute("header", authUser.getHeader());
+		SessionContext.setAttribute(request, "header", authUser.getHeader());
 
 //		if(null != authUser && StringUtils.isNotEmpty(authUser.getHeader())){
 //			authUser.setHeader(QiniuStorage.getUrl(authUser.getHeader()));
 //		}
 		mv.addObject("authUser",authUser);
+		mv.addObject("header", SessionContext.getAttribute(request, "header"));
 		return mv;
 	}
 	/**
@@ -159,6 +159,7 @@ public class UserController {
 				authUser.setHeader(url);
 			}
 			authUserService.updateSelectivity(authUser);
+			SessionContext.setAttribute(request, "header", authUser.getHeader());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -169,9 +170,10 @@ public class UserController {
 	 * 密码
 	 */
 	@RequestMapping("/passwd")
-	public ModelAndView passwd(){
+	public ModelAndView passwd(HttpServletRequest request){
 		ModelAndView mv = new ModelAndView("user/passwd");
 		mv.addObject("curNav","passwd");
+		mv.addObject("header", SessionContext.getAttribute(request, "header"));
 		return mv;
 	}
 	
@@ -204,7 +206,7 @@ public class UserController {
 	 * 问答
 	 */
 	@RequestMapping("/qa")
-	public ModelAndView qa(TailPage<CourseComment> page){
+	public ModelAndView qa(TailPage<CourseComment> page, HttpServletRequest request){
 		ModelAndView mv = new ModelAndView("user/qa");
 		mv.addObject("curNav","qa");
 		
@@ -212,7 +214,7 @@ public class UserController {
 		queryEntity.setUsername(SessionContext.getUsername());
 		page = courseCommentService.queryMyQAItemsPage(queryEntity, page);
 		mv.addObject("page", page);
-		
+		mv.addObject("header", SessionContext.getAttribute(request, "header"));
 		return mv;
 	}
 	
